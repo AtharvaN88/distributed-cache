@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  cache-a:
+    build: .
+    container_name: cache-a
+    environment:
+      - SELF_ADDR=cache-a:8081
+      - PEERS=cache-a:8081,cache-b:8082,cache-c:8083
+    ports:
+      - "8081:8081"
+
+  cache-b:
+    build: .
+    container_name: cache-b
+    environment:
+      - SELF_ADDR=cache-b:8082
+      - PEERS=cache-a:8081,cache-b:8082,cache-c:8083
+    ports:
+      - "8082:8082"
+
+  cache-c:
+    build: .
+    container_name: cache-c
+    environment:
+      - SELF_ADDR=cache-c:8083
+      - PEERS=cache-a:8081,cache-b:8082,cache-c:8083
+    ports:
+      - "8083:8083"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
